@@ -1,5 +1,6 @@
 
 #include "client_connection.h"
+#include "logger.hpp"
 
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -66,7 +67,7 @@ void sfera_webserver::client_connection::close()
     _socket->shutdown(b_ip::tcp::socket::shutdown_type::shutdown_both);
     _socket->close();
 
-    std::cout << "  connection closed by server" << std::endl;
+    BOOST_LOG(g_logger) << "connection closed by server";
 }
 
 

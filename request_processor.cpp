@@ -25,6 +25,7 @@ void sfera_webserver::request_processor::finalize()
     if (!_request->hasHeader("Connection") || _request->headers()["Connection"] != "keep-alive") {
         _connection->close();
         delete _connection;
+        _connection = nullptr;
     }
 }
 

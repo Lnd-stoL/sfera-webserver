@@ -11,6 +11,7 @@
 #include "http_request.h"
 #include "http_response.h"
 #include "http_standard_replies.h"
+#include "http_server_config.h"
 
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -19,30 +20,28 @@ namespace sfera_webserver
     class http_server
     {
     private:
-        std::string _localHomeDir;
+        http_server_config _config;
         http_standard_replies _standardReplies;
 
-        b_asio::io_service _ioservice;
-        b_ip::tcp::socket *_acceptedSocket;
-        b_ip::tcp::acceptor _acceptor;
+        b_asio::io_service *_ioservice;
 
 
     private:
-        void _startAsyncAccept();
-        void _handleAccept(const b_sys::error_code &ec);
         void _handleRequestReady(http_request *req, client_connection *connection);
         void _startAsyncRequestReading(client_connection* connection);
 
     public:
-        http_server(const std::string &homeDir, const std::string &ip, int port);
-        ~http_server();
+        http_server(const http_server_config &&config, b_asio::io_service *ioservice);
 
         void run();
+        void handleClientConnection(b_ip::tcp::socket *acceptedSocket);
 
     public:
-        inline const std::string& localHomeDir() const  { return _localHomeDir; }
+        inline const std::string& localHomeDir() const  { return _config.wwwHomeDir; }
         inline const http_standard_replies& standardReplies() const  { return _standardReplies; }
-        inline const b_asio::io_service&  ioService() const  { return _ioservice; }
+        inline const b_asio::io_service&  ioService() const  { return *_ioservice; }
+
+        inline b_asio::io_service&  ioService()  { return *_ioservice; }
     };
 }
 
